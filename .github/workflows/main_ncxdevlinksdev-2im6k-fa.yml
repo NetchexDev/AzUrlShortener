@@ -11,7 +11,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  DOTNET_VERSION: 'v4.0' # set this to the dotnet version to use
+  DOTNET_VERSION: '8.x' # set this to the dotnet version to use
 
 jobs:
   build-and-deploy:
@@ -24,16 +24,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
 
       - name: 'Resolve Project Dependencies Using Dotnet'
         shell: pwsh
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          dotnet build --configuration Release --output ./output
-          popd
+          Push-Location './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}';
+          dotnet build --configuration Release --output ./output;
+          Pop-Location;
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -49,4 +50,3 @@ jobs:
           app-name: 'ncxdevlinksdev-2im6k-fa'
           slot-name: 'Production'
           package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          
