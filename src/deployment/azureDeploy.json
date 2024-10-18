@@ -50,6 +50,13 @@
             "metadata": {
                 "description": "Owner of this deployment, person to contact for question."
             }
+        },
+        "Location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location of the resources to be deployed."
+            }
         }
     },
     "variables": {
@@ -68,7 +75,7 @@
             "name": "[variables('funcAppName')]",
             "type": "Microsoft.Web/sites",
             "kind": "functionapp",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('Location')]",
             "dependsOn": [
                 "[concat('microsoft.insights/components/', variables('insightsAppName'))]",
                 "[concat('Microsoft.Web/serverfarms/', variables('funcHhostingPlanName'))]",
@@ -157,7 +164,7 @@
             "apiVersion": "2023-12-01",
             "name": "[variables('funcHhostingPlanName')]",
             "type": "Microsoft.Web/serverfarms",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('Location')]",
             "kind": "",
             "properties": {
                 "reserved": true
@@ -171,7 +178,7 @@
             "apiVersion": "2015-05-01",
             "name": "[variables('insightsAppName')]",
             "type": "Microsoft.Insights/components",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('Location')]",
             "kind": "",
             "properties": {
                 "Application_Type": "web",
@@ -182,7 +189,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[variables('storageAccountName')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('Location')]",
             "apiVersion": "2019-06-01",
             "sku": {
                 "name": "Standard_LRS",
@@ -196,7 +203,7 @@
             "condition": "[equals(toLower(variables('deployTinyBlazorAdmin')), 'true')]",
             "type": "Microsoft.Web/staticSites",
             "name": "[variables('swaName')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('Location')]",
             "apiVersion": "2022-03-01",
             "sku": {
                 "name": "Standard",
@@ -227,7 +234,7 @@
                     ],
                     "properties": {
                         "backendResourceId": "[resourceId('Microsoft.Web/sites/', variables('funcAppName'))]",
-                        "region": "[resourceGroup().location]"
+                        "region": "[parameters('Location')]"
                     }
                 },
                 {
@@ -241,7 +248,7 @@
                     ],
                     "properties": {
                         "functionAppResourceId": "[resourceId('Microsoft.Web/sites/', variables('funcAppName'))]",
-                        "functionAppRegion": "[resourceGroup().location]"
+                        "functionAppRegion": "[parameters('Location')]"
                     }
                 }
             ]
